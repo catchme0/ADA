@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>BFS</h1>
+    <pre>#include <stdio.h>
+        #include <stdlib.h>
+        #include <stdbool.h>
+        
+        #define MAX 100
+        int t=0;
+        
+        typedef struct Queue {
+            int items[MAX];
+            int front;
+            int rear;
+        } Queue;
+        
+        void initQueue(Queue *q) {
+            q->front = -1;
+            q->rear = -1;
+        }
+        
+        bool isEmpty(Queue *q) {
+            return (q->front == -1);
+        }
+        
+        bool isFull(Queue *q) {
+            return (q->rear == MAX - 1);
+        }
+        
+        void enqueue(Queue *q, int value) {
+            if (isFull(q)) {
+                return;
+                t+=2;
+            }
+            if (q->front == -1) {
+                q->front = 0;
+                t+=6;
+            }
+            q->rear++;
+            q->items[q->rear] = value;
+        }
+        
+        int dequeue(Queue *q) {
+            if (isEmpty(q)) {
+                return -1;
+                t+=2;
+            }
+            int item = q->items[q->front];
+            q->front++;
+            if (q->front > q->rear) {
+                q->front = q->rear = -1;
+                t+=6;
+            }
+            return item;
+        }
+        
+        typedef struct Graph {
+            int adjMatrix[MAX][MAX];
+            int vertices;
+        } Graph;
+        
+        void initGraph(Graph *g, int vertices) {
+            g->vertices = vertices;
+            for (int i = 0; i < vertices; i++) {
+                for (int j = 0; j < vertices; j++) {
+                    g->adjMatrix[i][j] = 0;
+                    t+=8;
+                }
+            }
+        }
+        
+        void addEdge(Graph *g, int src, int dest) {
+            g->adjMatrix[src][dest] = 1;
+            g->adjMatrix[dest][src] = 1;
+        }
+        
+        void bfs(Graph *g, int startVertex) {
+            bool visited[MAX] = {false};
+            Queue q;
+            initQueue(&q);
+        
+            visited[startVertex] = true;
+            enqueue(&q, startVertex);
+        
+            while (!isEmpty(&q)) {
+                int currentVertex = dequeue(&q);
+                printf("%d ", currentVertex);
+        
+                for (int i = 0; i < g->vertices; i++) {
+                    if (g->adjMatrix[currentVertex][i] == 1 && !visited[i]) {
+                        enqueue(&q, i);
+                        visited[i] = true;
+                        t+=10;
+                    }
+                }
+            }
+        }
+        
+        int main() {
+            Graph g;
+            int vertices = 5;
+            int edges = 4;
+            int edgesData[4][2] = {{0, 1}, {0, 2}, {1, 3}, {2, 4}};
+            int startVertex = 1 ;
+        
+            initGraph(&g, vertices);
+        
+            for (int i = 0; i < edges; i++) {
+                addEdge(&g, edgesData[i][0], edgesData[i][1]);
+            }
+        
+            printf("BFS Traversal starting from vertex %d: \n", startVertex);
+            bfs(&g, startVertex);
+            printf("Total Time is: %d\n", t);
+            return 0;
+        
+        }
+        </pre>
+        <h2>DFS</h2>
+        <pre> 
+           #include<stdio.h>
+            #include<stdlib.h>
+            #include<stdbool.h> 
+            
+            #define MAX 100
+            int t=0;
+            
+            typedef struct Graph {
+                int adjMatrix[MAX][MAX];
+                int vertices;
+            } Graph;
+            
+            void initGraph(Graph *g, int vertices) {
+                g->vertices = vertices;
+                for (int i = 0; i < vertices; i++) {
+                    for (int j = 0; j < vertices; j++) {
+                        g->adjMatrix[i][j] = 0;
+                        t+=10;
+                    }
+                }
+            }
+            
+            void addEdge(Graph *g, int src, int dest) {
+                g->adjMatrix[src][dest] = 1;
+                g->adjMatrix[dest][src] = 1;
+            }
+            
+            void dfs(Graph *g, int vertex, bool visited[]) {
+                visited[vertex] = true;
+                printf("%d ", vertex);
+            
+                for (int i = 0; i < g->vertices; i++) {
+                    if (g->adjMatrix[vertex][i] == 1 && !visited[i]) {
+                        dfs(g, i, visited);
+                        t+=10;
+                    }
+                }
+            }
+            
+            int main() {
+                Graph g;
+                int vertices = 5;
+                int edges = 4;
+                int edgesData[4][2] = {{0, 1}, {0, 2}, {1, 3}, {2, 4}};
+                int startVertex = 0;
+            
+                initGraph(&g, vertices);
+            
+                for (int i = 0; i < edges; i++) {
+                    addEdge(&g, edgesData[i][0], edgesData[i][1]);
+                }
+            
+                bool visited[MAX] = {false};
+            
+                printf("DFS Traversal starting from vertex %d: \n", startVertex);
+                dfs(&g, startVertex, visited);
+                printf("Total Time is: %d\n", t);
+                return 0;
+            }
+            </pre>
+            <H2>Job Sheduling</H2>
+            <pre>
+                #include <stdio.h>
+
+                typedef struct {
+                    int profit;
+                    int deadline;
+                    int slotsRequired;
+                
+                } Job;
+                
+                int main() {
+                    int n = 5;
+                    int t=0;
+                    Job jobs[] = {
+                        {30, 2, 1},
+                        {60, 2, 1},
+                        {40, 1, 1},
+                        {100, 3, 1},
+                        {80, 4, 1}
+                    };
+                
+                    int maxSlots = 0;
+                
+                    for (int i = 0; i < n; i++) {
+                        if (jobs[i].deadline > maxSlots) {
+                            maxSlots = jobs[i].deadline;
+                            t= t+5;
+                        }
+                    }
+                
+                    for (int i = 0; i < n - 1; i++) {
+                        for (int j = i + 1; j < n; j++) {
+                            if (jobs[i].profit < jobs[j].profit) {
+                                Job temp = jobs[i];
+                                jobs[i] = jobs[j];
+                                jobs[j] = temp;
+                                t=t+11;
+                            }
+                        }
+                    }
+                
+                    int slot[maxSlots];
+                    for (int i = 0; i < maxSlots; i++) {
+                        slot[i] = 0;
+                        t=t+4;
+                    }
+                
+                    int result[maxSlots];
+                    for (int i = 0; i < maxSlots; i++) {
+                        result[i] = -1;
+                        t=t+5;
+                    }
+                
+                    int totalProfit = 0;
+                
+                    for (int i = 0; i < n; i++) {
+                        for (int j = jobs[i].deadline - 1; j >= 0; j--) {
+                            if (slot[j] == 0) {
+                                slot[j] = 1;
+                                result[j] = i;
+                                totalProfit += jobs[i].profit;
+                                t=t+12;
+                                break;
+                            }
+                        }
+                    }
+                
+                    printf("\nScheduled Jobs:\n");
+                    for (int i = 0; i < maxSlots; i++) {
+                        if (result[i] != -1) {
+                            printf("Slot %d: Job %d (Profit: %d, Deadline: %d)\n", i + 1, result[i] + 1, jobs[result[i]].profit, jobs[result[i]].deadline);
+                        }
+                    }
+                
+                    printf("Maximum Profit: %d\n", totalProfit);
+                    printf("Time complexity is %d\n", t);
+                
+                    return 0;
+                }
+                </pre>
+                <h2>Optimal merge</h2>
+                <pre>#include <stdio.h>
+                    #include <stdlib.h>
+                    
+                    int t=0;
+                    struct MinHeap {
+                        int *arr;
+                        int size;
+                        int capacity;
+                    };
+                    
+                    struct MinHeap* createMinHeap(int capacity) {
+                        struct MinHeap* minHeap = (struct MinHeap*)malloc(sizeof(struct MinHeap));
+                        minHeap->capacity = capacity;
+                        minHeap->size = 0;
+                        minHeap->arr = (int*)malloc(capacity * sizeof(int));
+                        return minHeap;
+                    }
+                    
+                    void swap(int* x, int* y) {
+                        int temp = *x;
+                        *x = *y;
+                        *y = temp;
+                    }
+                    
+                    void minHeapify(struct MinHeap* minHeap, int idx) {
+                         int t= 0;
+                        int smallest = idx;
+                        int left = 2 * idx + 1;
+                        int right = 2 * idx + 2;
+                        t=t+6;
+                    
+                        if (left < minHeap->size && minHeap->arr[left] < minHeap->arr[smallest])
+                            smallest = left;
+                            t=t+10;
+                    
+                        if (right < minHeap->size && minHeap->arr[right] < minHeap->arr[smallest])
+                            smallest = right;
+                            t=t+10;
+                    
+                        if (smallest != idx) {
+                            swap(&minHeap->arr[smallest], &minHeap->arr[idx]);
+                            minHeapify(minHeap, smallest);
+                            t=t+6;
+                        }
+                    }
+                    
+                    int extractMin(struct MinHeap* minHeap) {
+                        if (minHeap->size <= 0)
+                            return -1;
+                            t=t+4;
+                        if (minHeap->size == 1) {
+                            minHeap->size--;
+                            return minHeap->arr[0];
+                            t=t+8;
+                        }
+                    
+                        int root = minHeap->arr[0];
+                        minHeap->arr[0] = minHeap->arr[minHeap->size - 1];
+                        minHeap->size--;
+                        minHeapify(minHeap, 0);
+                    
+                        return root;
+                    }
+                    
+                    void insertMinHeap(struct MinHeap* minHeap, int val) {
+                        minHeap->size++;
+                        int i = minHeap->size - 1;
+                        minHeap->arr[i] = val;
+                    
+                        while (i != 0 && minHeap->arr[(i - 1) / 2] > minHeap->arr[i]) {
+                            swap(&minHeap->arr[i], &minHeap->arr[(i - 1) / 2]);
+                            i = (i - 1) / 2;
+                            t=t+17;
+                        }
+                    }
+                    
+                    int optimalMerge(int files[], int n) {
+                         int t= 0;
+                        struct MinHeap* minHeap = createMinHeap(n);
+                    
+                        for (int i = 0; i < n; i++) {
+                            insertMinHeap(minHeap, files[i]);
+                            t=t+3;
+                        }
+                    
+                        int totalCost = 0;
+                    
+                        while (minHeap->size > 1) {
+                            int first = extractMin(minHeap);
+                            int second = extractMin(minHeap);
+                    
+                            int mergedCost = first + second;
+                            totalCost += mergedCost;
+                            t=t+9;
+                    
+                            insertMinHeap(minHeap, mergedCost);
+                        }
+                    
+                        return totalCost;
+                    }
+                    
+                    int main() {
+                        int files[] = { 10, 6, 20, 2,12 };
+                        int n = sizeof(files) / sizeof(files[0]);
+                    
+                        int cost = optimalMerge(files, n);
+                    
+                        printf("Optimal merge cost: %d\n", cost);
+                        printf("Total Time is: %d\n", t);
+                        return 0;
+                    
+                    }
+                    </pre>
+
+                    <h2>Kruskal</h2>
+                    <pre>#include <stdio.h>
+                        #include <stdlib.h>
+                        #define INF 99999
+                        #define MAX 100
+                         int t=0;
+                        
+                        int parent[MAX];
+                        int rank[MAX];
+                        
+                        int find(int i) {
+                            if (parent[i] == i) {
+                                return i;
+                                t+=2;
+                            }
+                            return parent[i] = find(parent[i]);
+                            t+=1;
+                        }
+                        
+                        void unionSets(int u, int v) {
+                            int rootU = find(u);
+                            int rootV = find(v);
+                        
+                            if (rootU != rootV) {
+                                if (rank[rootU] < rank[rootV]) {
+                                    parent[rootU] = rootV;
+                                } else if (rank[rootU] > rank[rootV]) {
+                                    parent[rootV] = rootU;
+                                } else {
+                                    parent[rootV] = rootU;
+                                    rank[rootU]++;
+                                    t+=10;
+                                }
+                            }
+                        }
+                        typedef struct {
+                            int u, v, weight;
+                        } Edge;
+                        
+                        int compareEdges(const void* a, const void* b) {
+                            Edge* edge1 = (Edge*)a;
+                            Edge* edge2 = (Edge*)b;
+                            return edge1->weight - edge2->weight;
+                            t+=10;
+                        }
+                        
+                        void kruskal(int n, int m, Edge edges[]) {
+                            int minCost = 0;
+                            int edgeCount = 0;
+                        
+                        
+                            for (int i = 0; i < n; i++) {
+                                parent[i] = i;
+                                rank[i] = 0;
+                                t+=5;
+                            }
+                        
+                            qsort(edges, m, sizeof(Edge), compareEdges);
+                        
+                        
+                            for (int i = 0; i < m; i++) {
+                                int u = edges[i].u;
+                                int v = edges[i].v;
+                        
+                                if (find(u) != find(v)) {
+                                    unionSets(u, v);
+                                    minCost += edges[i].weight;
+                                    edgeCount++;
+                        
+                                    printf("Edge (%d, %d) with weight %d included in MST\n", u, v, edges[i].weight);
+                                }
+                                if (edgeCount == n - 1) {
+                                    break;
+                                    t+=10;
+                                }
+                            }
+                        
+                            if (edgeCount < n - 1) {
+                                printf("The graph is disconnected. Minimum Spanning Tree cannot be formed.\n");
+                            }
+                        
+                            printf("Minimum cost of the spanning tree: %d\n", minCost);
+                        }
+                        int main() {
+                            int n = 4;
+                            int m = 5;
+                            Edge edges[] = {
+                                {0, 1, 10},
+                                {0, 2, 6},
+                                {0, 3, 5},
+                                {1, 3, 15},
+                                {2, 3, 4}
+                            };
+                            kruskal(n, m, edges);
+                            printf("Total Time is: %d\n", t);
+                            return 0;
+                        }
+                        </pre>
+                        <h2>Fractional Knapsack Problem</h2>
+                        <pre>#include <stdio.h>
+                            struct Item {
+                                int weight;
+                                int value;
+                                float ratio;
+                            };
+                            
+                            
+                            int compare(const void *a, const void *b) {
+                                float r1 = ((struct Item*)a)->ratio;
+                                float r2 = ((struct Item*)b)->ratio;
+                                if (r1 < r2)
+                                    return 1;
+                                else if (r1 > r2)
+                                    return -1;
+                                else
+                                    return 0;
+                            }
+                            
+                            
+                            float knapsack(int capacity, struct Item items[], int n) {
+                                qsort(items, n, sizeof(items[0]), compare);
+                            
+                                int currentWeight = 0;
+                                float totalValue = 0.0;
+                            
+                                for (int i = 0; i < n; i++) {
+                            
+                                    if (currentWeight + items[i].weight <= capacity) {
+                                        currentWeight += items[i].weight;
+                                        totalValue += items[i].value;
+                                    }
+                            
+                                    else {
+                                        int remainingCapacity = capacity - currentWeight;
+                                        totalValue += items[i].value * ((float)remainingCapacity / items[i].weight);
+                                        break;
+                                    }
+                                }
+                            
+                                return totalValue;
+                            }
+                            
+                            int main() {
+                                int n = 4;
+                                int capacity = 50;
+                                struct Item items[] = {
+                                    {10, 60, 0},
+                                    {20, 100, 0},
+                                    {30, 120, 0},
+                                    {40, 200, 0}
+                                };
+                            
+                            
+                                for (int i = 0; i < n; i++) {
+                                    items[i].ratio = (float) items[i].value / items[i].weight;
+                                }
+                                float maxValue = knapsack(capacity, items, n);
+                                printf("Maximum value in Knapsack = %.2f\n", maxValue);
+                            
+                                return 0;
+                            }
+                            </pre>
+                            <h2>Hashing</h2>
+                            <pre>#include <stdio.h>
+                                #include <stdlib.h>
+                                #include <string.h>
+                                
+                                #define TABLE_SIZE 10
+                                
+                                typedef struct Node {
+                                    char *key;
+                                    int value;
+                                    struct Node *next;
+                                } Node;
+                                
+                                Node *hashTable[TABLE_SIZE]; // Array of pointers to Nodes
+                                
+                                // Hash function
+                                unsigned int hash(const char *key) {
+                                    unsigned int hash = 0;
+                                    while (*key) {
+                                        hash = (hash * 31) + *key++;
+                                    }
+                                    return hash % TABLE_SIZE;
+                                }
+                                
+                                // Insert key-value pair
+                                void insert(const char *key, int value) {
+                                    unsigned int index = hash(key);
+                                    Node *newNode = malloc(sizeof(Node));
+                                    newNode->key = strdup(key);
+                                    newNode->value = value;
+                                    newNode->next = hashTable[index];
+                                    hashTable[index] = newNode;
+                                }
+                                
+                                // Search for a key
+                                int search(const char *key) {
+                                    unsigned int index = hash(key);
+                                    Node *curr = hashTable[index];
+                                    while (curr) {
+                                        if (strcmp(curr->key, key) == 0) {
+                                            return curr->value;
+                                        }
+                                        curr = curr->next;
+                                    }
+                                    return -1; // Not found
+                                }
+                                
+                                // Display the hash table
+                                void display() {
+                                    for (int i = 0; i < TABLE_SIZE; i++) {
+                                        Node *curr = hashTable[i];
+                                        printf("Bucket %d: ", i);
+                                        while (curr) {
+                                            printf("(%s, %d) -> ", curr->key, curr->value);
+                                            curr = curr->next;
+                                        }
+                                        printf("NULL\n");
+                                    }
+                                }
+                                
+                                // Free memory
+                                void cleanup() {
+                                    for (int i = 0; i < TABLE_SIZE; i++) {
+                                        Node *curr = hashTable[i];
+                                        while (curr) {
+                                            Node *temp = curr;
+                                            curr = curr->next;
+                                            free(temp->key);
+                                            free(temp);
+                                        }
+                                    }
+                                }
+                                
+                                int main() {
+                                    insert("apple", 100);
+                                    insert("banana", 200);
+                                    insert("grape", 300);
+                                    insert("orange", 400);
+                                    insert("melon", 500);
+                                
+                                    printf("Search apple: %d\n", search("apple"));
+                                    printf("Search mango: %d\n", search("mango")); // Should print -1 (not found)
+                                
+                                    printf("\nHash Table:\n");
+                                    display();
+                                
+                                    cleanup(); // Free memory
+                                    return 0;
+                                }
+                                </pre>
+
+
+</body>
+</html>
